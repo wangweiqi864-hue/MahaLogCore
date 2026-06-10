@@ -23,7 +23,7 @@ This repository is prepared for private pod distribution through:
 
 ## Publish Checklist
 
-- Push the repository and tag `0.1.0`
+- Push the repository and tag `0.1.1`
 - Add the podspec to `MaHaSpecs`
 
 ## Notes
