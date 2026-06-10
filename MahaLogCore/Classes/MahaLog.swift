@@ -1,5 +1,5 @@
 //
-//  MHLog.swift
+//  MahaLog.swift
 //  Pods
 //
 //  Created by mahaLive on 2024/2/21.
@@ -8,9 +8,9 @@
 import Foundation
 import SwiftyBeaver
 
-public class MHLog{
+public class MahaLog{
 
-    private static let share = MHLog()
+    private static let share = MahaLog()
     
     private let log = SwiftyBeaver.self
     private let console = ConsoleDestination()
@@ -40,7 +40,7 @@ public class MHLog{
         log.addDestination(file)
     }
     
-    public static func debug<T>(_ message: T, file: String = #file, function: String = #function, line: Int = #line) {
+    public static func recordDebug<T>(_ message: T, file: String = #file, function: String = #function, line: Int = #line) {
         autoreleasepool {
             let fileName = (file as NSString).lastPathComponent
             let msg = "flie=\(fileName)::\(message)"
@@ -49,7 +49,7 @@ public class MHLog{
     }
     
     
-    public static func info<T>(_ message: T, file: String = #file, function: String = #function, line: Int = #line) {
+    public static func recordInfo<T>(_ message: T, file: String = #file, function: String = #function, line: Int = #line) {
         autoreleasepool {
             let fileName = (file as NSString).lastPathComponent
             let msg = "flie=\(fileName)::\(message)"
@@ -58,7 +58,7 @@ public class MHLog{
     }
 
     
-    public static func error<T>(_ message: T, file: String = #file, function: String = #function, line: Int = #line) {
+    public static func recordError<T>(_ message: T, file: String = #file, function: String = #function, line: Int = #line) {
         autoreleasepool {
             let fileName = (file as NSString).lastPathComponent
             let msg = "flie=\(fileName)::\(message)"
@@ -67,7 +67,7 @@ public class MHLog{
     }
     
     // 打印的debu
-    public static func log<T>(_ message: T, file: String = #file) {
+    public static func record<T>(_ message: T, file: String = #file) {
         autoreleasepool {
             let fileName = (file as NSString).lastPathComponent
             let msg = "flie=\(fileName)::\(message)"
