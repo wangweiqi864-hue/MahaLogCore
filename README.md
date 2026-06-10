@@ -1,0 +1,2 @@
+# MahaLogCore
+MahaLogCore
