@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'MahaLogCore'
-  s.version          = '0.1.1'
+  s.version          = '0.0.1'
   s.summary          = 'A lightweight application logger built on top of SwiftyBeaver.'
 
   s.description      = <<-DESC

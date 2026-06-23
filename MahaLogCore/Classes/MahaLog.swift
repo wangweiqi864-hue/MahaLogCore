@@ -8,71 +8,72 @@
 import Foundation
 import SwiftyBeaver
 
-public class MahaLog{
+public final class MahaLog {
+    public enum Level {
+        case debug
+        case info
+        case error
+    }
 
-    private static let share = MahaLog()
-    
-    private let log = SwiftyBeaver.self
+    private static let shared = MahaLog()
+
+    private let logger = SwiftyBeaver.self
     private let console = ConsoleDestination()
     private let file = FileDestination()
-    
-    private var logPathDir = "/Maha/logs/"
-    
-    private init() {config()}
-    
-    private func config() {
-        
-        let doucmentDir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first ?? ""
-        logPathDir = doucmentDir + logPathDir + "log"
-        
-//        logPathDir = dir.appending(logPathDir)
-        
-        // 默认swiftybeaver.log文件日志
-        file.logFileAmount = 4
-        file.logFileURL = URL(fileURLWithPath:logPathDir)
-        file.format = "$D YYYY:MM:dd HH:mm:ss$d $L: $M"
-        
+
+    private static let logFormat = "$D YYYY:MM:dd HH:mm:ss$d $L: $M"
+    private static let logFileAmount = 4
+    private static let logDirectoryComponents = ["Maha", "logs"]
+    private static let logFileName = "log"
+    private static let filePrefix = "flie="
+
+    private init() { configureLogger() }
+
+    private func configureLogger() {
+
+        // 默认 swiftybeaver.log 文件日志
+        file.logFileAmount = Self.logFileAmount
+        file.logFileURL = buildLogFileURL()
+        file.format = Self.logFormat
+
         // Xcode控制台日志
-        console.format = "$D YYYY:MM:dd HH:mm:ss$d $L: $M"
+        console.format = Self.logFormat
 
-        //添加配置到SwiftyBeaver
-        log.addDestination(console)
-        log.addDestination(file)
-    }
-    
-    public static func recordDebug<T>(_ message: T, file: String = #file, function: String = #function, line: Int = #line) {
-        autoreleasepool {
-            let fileName = (file as NSString).lastPathComponent
-            let msg = "flie=\(fileName)::\(message)"
-            self.share.log.debug(msg)
-        }
-    }
-    
-    
-    public static func recordInfo<T>(_ message: T, file: String = #file, function: String = #function, line: Int = #line) {
-        autoreleasepool {
-            let fileName = (file as NSString).lastPathComponent
-            let msg = "flie=\(fileName)::\(message)"
-            self.share.log.info(msg)
-        }
+        // 添加配置到 SwiftyBeaver
+        logger.addDestination(console)
+        logger.addDestination(file)
     }
 
-    
-    public static func recordError<T>(_ message: T, file: String = #file, function: String = #function, line: Int = #line) {
+    private func buildLogFileURL() -> URL {
+        let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+            ?? URL(fileURLWithPath: "")
+
+        return Self.logDirectoryComponents.reduce(documentDirectory) { partialURL, component in
+            partialURL.appendingPathComponent(component, isDirectory: true)
+        }.appendingPathComponent(Self.logFileName, isDirectory: false)
+    }
+
+    private static func formatLogMessage<T>(_ message: T, file: String) -> String {
+        let fileName = (file as NSString).lastPathComponent
+        return "\(filePrefix)\(fileName)::\(message)"
+    }
+
+    private static func writeLog<T>(_ message: T, file: String, using output: (SwiftyBeaver.Type, String) -> Void) {
         autoreleasepool {
-            let fileName = (file as NSString).lastPathComponent
-            let msg = "flie=\(fileName)::\(message)"
-            self.share.log.error(msg)
+            output(shared.logger, formatLogMessage(message, file: file))
         }
     }
-    
-    // 打印的debu
-    public static func record<T>(_ message: T, file: String = #file) {
-        autoreleasepool {
-            let fileName = (file as NSString).lastPathComponent
-            let msg = "flie=\(fileName)::\(message)"
-            self.share.log.debug(msg)
+
+    public static func record<T>(_ message: T, level: Level = .debug, file: String = #file) {
+        writeLog(message, file: file) { logger, content in
+            switch level {
+            case .debug:
+                logger.debug(content)
+            case .info:
+                logger.info(content)
+            case .error:
+                logger.error(content)
+            }
         }
     }
-    
 }
