@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'MahaLogCore'
-  s.version          = '0.1.2'
+  s.version          = '0.1.3'
   s.summary          = 'A lightweight application logger built on top of SwiftyBeaver.'
 
   s.description      = <<-DESC
@@ -17,5 +17,6 @@ It writes logs to both the Xcode console and rolling files in the app sandbox.
   s.swift_version = '5.0'
 
   s.source_files = 'MahaLogCore/Classes/**/*'
+  s.resources = 'MahaLogCore/PrivacyInfo.xcprivacy'
   s.dependency 'SwiftyBeaver'
 end
